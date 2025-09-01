@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Personagem Daggerheart</title>
+    <link rel="icon" href="https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://www.daggerheart.com/&size=16" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FFFFFF;
+            --text-color: #374151; /* Gray 700 */
+            --border-color: #9ca3af; /* Gray 400 */
+            --header-font: 'Cinzel', serif;
+            --body-font: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #e5e7eb; /* Gray 200 */
+            color: var(--text-color);
+            font-family: var(--body-font);
+        }
+
+        #app-container {
+            height: calc(100vh - 72px); /* Full height minus navbar */
+        }
+        
+        .character-sheet-container {
+            background-color: var(--bg-color);
+        }
+
+        /* Tabs */
+        #tabs-container {
+            background-color: #f3f4f6; /* Gray 100 */
+            border-right: 1px solid #d1d5db; /* Gray 300 */
+        }
+        .tab {
+            border-bottom: 1px solid #d1d5db;
+            color: #4b5563; /* Gray 600 */
+        }
+        .tab.active {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-right: 2px solid var(--text-color);
+            margin-right: -1px;
+        }
+        .close-tab-btn {
+            display: none;
+        }
+        .tab:hover .close-tab-btn {
+            display: inline-flex;
+        }
+        
+        /* Custom input styles */
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--body-font);
+            padding: 2px 4px;
+            width: 100%;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-bottom: 1px solid var(--text-color);
+        }
+        
+        .info-input {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .info-input:focus {
+            border: 1px solid var(--text-color);
+        }
+
+        textarea {
+            resize: vertical;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        h1, h2, h3, .section-title {
+            font-family: var(--header-font);
+            font-weight: 700;
+            color: var(--text-color);
+            text-transform: uppercase;
+        }
+
+        .section {
+            border: 2px solid var(--border-color);
+            padding: 2rem 0.75rem 0.75rem;
+            border-radius: 8px;
+            background-color: rgba(236, 239, 241, 0.3); /* Lighter gray with alpha */
+            position: relative;
+        }
+        
+        /* Shield Input Wrapper */
+        .shield-wrapper, .shield-wrapper-sm, .shield-wrapper-xs {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .shield-wrapper { width: 100px; height: 120px; }
+        .shield-wrapper-sm { width: 80px; height: 96px; }
+        .shield-wrapper-xs { width: 70px; height: 84px; }
+
+        .shield-svg {
+            position: absolute; width: 100%; height: 100%;
+            z-index: 0; fill: var(--bg-color);
+            stroke: var(--text-color); stroke-width: 2px;
+        }
+
+        .shield-wrapper input[type="number"], .shield-wrapper-sm input[type="number"], .shield-wrapper-xs input[type="number"] {
+            position: relative; z-index: 1; text-align: center; border: none;
+            font-family: var(--header-font); font-weight: 700;
+            padding: 0; background: transparent;
+        }
+
+        .shield-wrapper input[type="number"] { width: 60px; font-size: 2.5rem; }
+        .shield-wrapper-sm input[type="number"] { width: 50px; font-size: 2rem; }
+        .shield-wrapper-xs input[type="number"] { width: 45px; font-size: 1.75rem; }
+        
+        /* Hide number input arrows */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        
+        /* Checkboxes */
+        .round-checkbox input, .square-checkbox input, .diamond-checkbox input, .coin-checkbox input { display: none; }
+        .round-checkbox label, .square-checkbox label {
+            cursor: pointer; display: inline-block;
+            border: 2px solid var(--text-color);
+            background-color: transparent;
+            transition: background-color 0.2s;
+        }
+        .round-checkbox input:checked + label, .square-checkbox input:checked + label { background-color: var(--text-color); }
+
+        .round-checkbox label { width: 18px; height: 18px; border-radius: 50%; }
+        .square-checkbox label { width: 24px; height: 20px; border-radius: 4px; }
+        .square-checkbox.disabled label { opacity: 0.3; cursor: default; }
+        
+        /* Shield & Diamond Checkboxes */
+        .shield-checkbox input, .diamond-checkbox input { display: none; }
+        .shield-checkbox label, .diamond-checkbox label { cursor: pointer; display: inline-block; }
+        .shield-checkbox label { width: 24px; height: 28px; }
+        .diamond-checkbox label { width: 28px; height: 28px; }
+
+        .shield-checkbox-svg {
+            fill: transparent; stroke: var(--text-color);
+            stroke-width: 2px; transition: fill 0.2s;
+        }
+        .diamond-checkbox-svg {
+            fill: white;
+            stroke: var(--text-color);
+            stroke-width: 2px; transition: fill 0.2s;
+        }
+        .diamond-checkbox {
+            position: relative; /* For scar icon positioning */
+        }
+        .diamond-checkbox input:disabled + label {
+            cursor: default;
+        }
+        .diamond-checkbox.scarred label {
+            cursor: default;
+        }
+        .diamond-checkbox.scarred .diamond-checkbox-svg {
+            fill: #ef4444; /* Red-500 */
+        }
+        .scar-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            stroke: white;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            display: none; /* Hidden by default */
+        }
+        .diamond-checkbox.scarred .scar-icon {
+            display: block; /* Shown when scarred */
+        }
+
+        .shield-checkbox input:checked + label .shield-checkbox-svg,
+        .diamond-checkbox input:checked:not(:disabled) + label .diamond-checkbox-svg { fill: var(--text-color); }
+
+        .coin-checkbox label {
+            cursor: pointer; display: inline-block;
+            width: 22px; height: 22px;
+        }
+        .coin-checkbox-svg {
+            fill: #d1d5db; stroke: var(--text-color);
+            stroke-width: 1.5px; transition: fill 0.2s;
+        }
+        .coin-checkbox input:checked + label .coin-checkbox-svg {
+            fill: #f59e0b;
+        }
+
+
+        /* Decorated Title */
+        .decorated-title-wrapper {
+            position: absolute; top: 0; left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            display: flex; justify-content: center; align-items: center;
+            width: 90%; max-width: 350px; height: 40px;
+        }
+        .decorated-title-svg {
+            position: absolute; width: 100%; height: 100%;
+            fill: var(--bg-color); stroke: var(--text-color);
+            stroke-width: 2px;
+        }
+        .decorated-title-wrapper .section-title { position: relative; z-index: 1; }
+        
+        /* Damage Style */
+        .damage-box {
+            background-color: var(--text-color); color: var(--bg-color);
+            padding: 4px 12px; font-family: var(--header-font);
+            font-weight: 700; font-size: 0.8rem; text-align:center;
+            clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+        }
+        
+        /* Stat Buttons */
+        .stat-btn {
+            width: 20px; height: 20px; border-radius: 50%;
+            background-color: var(--text-color); color: var(--bg-color);
+            font-weight: bold; display: inline-flex;
+            justify-content: center; align-items: center;
+            cursor: pointer; border: none; line-height: 1;
+        }
+        
+        /* Experience Row */
+        .experience-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .experience-name {
+            flex-grow: 1;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 2px;
+        }
+        .experience-bonus-wrapper {
+            position: relative;
+            width: 50px;
+            height: 30px;
+        }
+        .experience-bonus-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            fill: var(--border-color);
+            opacity: 0.3;
+        }
+        .experience-bonus-input {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            border: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        /* Dotted separator */
+        .dotted-separator {
+            border-left: 2px dotted var(--border-color);
+            align-self: stretch;
+        }
+        
+        .styled-input-line {
+            border: none;
+            text-align: center;
+        }
+        .styled-input-line:focus {
+           outline: none;
+        }
+
+        .curved-line {
+            width: 100%;
+            height: 10px;
+            stroke: var(--border-color);
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .scar-button {
+            color: #ef4444; /* Red-500 */
+        }
+        
+        /* Conditions Button */
+        .conditions-button {
+            background-color: #f3f4f6; /* Gray-100 */
+            color: var(--text-color);
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            min-width: 160px;
+            font-family: var(--header-font);
+            clip-path: polygon(10% 0, 90% 0, 100% 25%, 100% 75%, 90% 100%, 10% 100%, 0 75%, 0 25%);
+        }
+        
+        /* Modals */
+        .modal {
+            z-index: 50;
+        }
+        
+        .modal-content {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-top: 4px solid var(--border-color);
+        }
+        
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 24px;
+        }
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #d1d5db; /* gray-300 */
+          transition: .4s;
+          border-radius: 24px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "X";
+          color: #d1d5db; /* gray-300 */
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 20px;
+          width: 20px;
+          left: 2px;
+          bottom: 2px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #6b7280; /* gray-500 */
+        }
+        input:checked + .slider:before {
+          transform: translateX(26px);
+        }
+
+
+    </style>
+</head>
+<body>
+    <nav class="bg-white shadow-md p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl md:text-2xl tracking-widest">DAGGERHEART</h1>
+                <h2 class="text-xs text-gray-600 tracking-wider">FICHA DE PERSONAGEM</h2>
+            </div>
+            <div class="flex gap-2 items-center">
+                <div class="relative">
+                     <button id="add-btn" class="bg-gray-700 text-white font-bold py-2 px-4 rounded hover:bg-gray-600 transition-colors text-sm">
+                        ADD
+                    </button>
+                    <div id="add-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
+                        <a href="#" id="new-sheet-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Nova Ficha</a>
+                        <a href="#" id="import-sheet-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Importar</a>
+                    </div>
+                </div>
+                <button id="save-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded hover:bg-gray-300 transition-colors text-sm" disabled>
+                    Salvar
+                </button>
+                 <input type="file" id="import-file-input" class="hidden" accept=".json">
+            </div>
+        </div>
+    </nav>
+    <main id="app-container" class="flex">
+        <aside id="tabs-container" class="w-32 flex-shrink-0 h-full overflow-y-auto">
+            <!-- Tabs will be generated here -->
+        </aside>
+        <div id="sheets-container" class="flex-grow h-full overflow-y-auto">
+             <div id="welcome-screen" class="w-full h-full flex flex-col items-center justify-center text-center p-8 text-gray-500">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                 <h2 class="text-2xl font-bold mb-2">Bem-vindo!</h2>
+                 <p>Crie uma nova ficha ou importe um personagem existente usando o botão "ADD" no canto superior direito.</p>
+             </div>
+        </div>
+    </main>
+    
+    <!-- Modals Template -->
+    <template id="modal-template">
+        <div class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div class="modal-content w-full max-w-md p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center border-b border-gray-300 pb-2">
+                    <h2 class="modal-title text-2xl font-bold uppercase"></h2>
+                    <button class="close-modal-btn text-3xl font-bold leading-none hover:text-gray-500">&times;</button>
+                </div>
+                <div class="modal-body mt-4 space-y-3 max-h-[60vh] overflow-y-auto">
+                    <!-- Content will be generated here -->
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabsContainer = document.getElementById('tabs-container');
+            const sheetsContainer = document.getElementById('sheets-container');
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const addBtn = document.getElementById('add-btn');
+            const addDropdown = document.getElementById('add-dropdown');
+            const newSheetBtn = document.getElementById('new-sheet-btn');
+            const importSheetBtn = document.getElementById('import-sheet-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const importFileInput = document.getElementById('import-file-input');
+            const modalTemplate = document.getElementById('modal-template');
+
+            let activeSheetId = null;
+            let sheetCounter = 0;
+
+            function adjustLayout() {
+                if (!activeSheetId) return;
+
+                const leftCol = document.getElementById(`left-column-${activeSheetId}`);
+                const rightCol = document.getElementById(`right-column-${activeSheetId}`);
+                const textarea = document.getElementById(`class-abilities-textarea-${activeSheetId}`);
+
+                if (!leftCol || !rightCol || !textarea) return;
+                
+                textarea.style.height = 'auto';
+
+                setTimeout(() => {
+                    const rightHeight = rightCol.offsetHeight;
+                    const leftHeight = leftCol.offsetHeight;
+                    
+                    if (rightHeight > leftHeight) {
+                        const currentTextareaHeight = textarea.offsetHeight;
+                        const diff = rightHeight - leftHeight;
+                        textarea.style.height = `${currentTextareaHeight + diff}px`;
+                    }
+                }, 100);
+            }
+
+            const attributes = [
+                { id: 'agilidade', name: 'Agilidade', desc: 'Correr, Equilibrar-se, Saltar' },
+                { id: 'forca', name: 'Força', desc: 'Agarrar, Levantar, romper' },
+                { id: 'acuidade', name: 'Acuidade', desc: 'Esconder-se, manipular, manobrar' },
+                { id: 'instinto', name: 'Instinto', desc: 'perceber, pressentir, orientar' },
+                { id: 'presenca', name: 'Presença', desc: 'comover, convencer, enganar' },
+                { id: 'conhecimento', name: 'Conhecimento', desc: 'analisar, aprender, lembrar' },
+            ];
+
+            // Dropdown logic
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addDropdown.classList.toggle('hidden');
+            });
+            document.addEventListener('click', () => addDropdown.classList.add('hidden'));
+
+            newSheetBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                createNewSheet();
+            });
+            
+            importSheetBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                importFileInput.click();
+            });
+
+            function createSheetComponentHTML(sheetId) {
+                return `
+                <div id="${sheetId}" class="character-sheet-container hidden p-4 sm:p-6 md:p-8">
+                    <div class="max-w-6xl mx-auto space-y-4">
+                        <!-- HEADER -->
+                        <div class="flex flex-wrap md:flex-nowrap items-center justify-between gap-4">
+                           <div class="w-32 h-32 border-2 border-dashed border-[var(--border-color)] rounded-md flex items-center justify-center text-center text-xs text-gray-500 p-2 flex-shrink-0 relative">
+                                <img id="portrait-image-${sheetId}" class="hidden absolute inset-0 w-full h-full object-cover rounded-md" src="">
+                                <label for="portrait-upload-${sheetId}" class="cursor-pointer w-full h-full flex items-center justify-center">
+                                    <span id="portrait-placeholder-${sheetId}">Retrato do Personagem</span>
+                                </label>
+                                <input type="file" id="portrait-upload-${sheetId}" class="hidden" accept="image/*">
+                            </div>
+                            <div class="flex-grow grid grid-cols-2 gap-x-4 gap-y-2 mx-4">
+                                <div><label class="text-xs uppercase">Nome</label><input type="text" id="info-nome-${sheetId}" class="info-input"></div>
+                                <div><label class="text-xs uppercase">Gênero</label><input type="text" id="info-genero-${sheetId}" class="info-input"></div>
+                                <div><label class="text-xs uppercase">Herança</label><input type="text" id="info-heranca-${sheetId}" class="info-input"></div>
+                                <div><label class="text-xs uppercase">Classe & Subclasse</label><input type="text" id="info-classe-${sheetId}" class="info-input"></div>
+                            </div>
+                            <div id="conditions-button-${sheetId}" class="conditions-button text-center flex-shrink-0 cursor-pointer">
+                                <h3 class="font-bold uppercase text-sm">Condições</h3>
+                                <div id="conditions-list-${sheetId}" class="text-xs font-sans font-light normal-case">NO ACTIVE CONDITIONS</div>
+                            </div>
+                            <div class="text-center flex-shrink-0">
+                                 <h3 class="section-title mb-1">Nível</h3>
+                                 <div class="shield-wrapper" style="width: 80px; height: 96px;">
+                                    <svg class="shield-svg" viewBox="0 0 100 120"><path d="M50 0 L100 25 V75 L50 120 L0 75 V25 Z"/></svg>
+                                    <input type="number" id="nivel-input-${sheetId}" value="1" class="!text-3xl">
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="border-t-2 border-[var(--border-color)]">
+                         <!-- STATS SECTION -->
+                        <div class="flex flex-wrap justify-center md:justify-between items-center gap-6">
+                            <!-- Evasion & Armor -->
+                            <div class="flex items-center gap-4">
+                                <div class="text-center">
+                                    <h3 class="section-title text-sm mb-1">Evasão</h3>
+                                    <div class="shield-wrapper-xs">
+                                        <svg class="shield-svg" viewBox="0 0 100 115"><path d="M50 0 L100 25 V75 L50 115 L0 75 V25 Z"/></svg>
+                                        <input type="number" id="evasao-input-${sheetId}" value="10">
+                                    </div>
+                                </div>
+                                <div class="text-4xl text-[var(--border-color)]">|</div>
+                                <div class="flex items-center gap-2">
+                                    <div class="text-center">
+                                        <h3 class="section-title text-sm mb-1">Armadura</h3>
+                                        <div class="shield-wrapper-xs">
+                                            <svg class="shield-svg" viewBox="0 0 100 115"><path d="M50 0 L100 25 V75 L50 115 L0 75 V25 Z"/></svg>
+                                            <input type="number" id="armadura-input-${sheetId}" value="0">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-1">
+                                        ${Array.from({length: 12}, (_, i) => `<div class="shield-checkbox"><input type="checkbox" id="arm-check-${i+1}-${sheetId}"><label for="arm-check-${i+1}-${sheetId}"><svg class="shield-checkbox-svg" viewBox="0 0 100 120"><path d="M50 0 L100 25 V75 L50 120 L0 75 V25 Z"/></svg></label></div>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-l-2 border-[var(--border-color)] self-stretch hidden md:block"></div>
+                            
+                            <!-- Attributes -->
+                            <div class="flex-grow flex flex-wrap justify-center md:justify-between items-center gap-x-1">
+                               ${attributes.map((attr, index) => `
+                                    <div class="text-center p-1 flex-1 min-w-[100px]">
+                                        <div class="flex items-center justify-center gap-2 mb-1">
+                                            <label for="${attr.id}-prof-${sheetId}" class="section-title text-sm" title="${attr.desc}">${attr.name}</label>
+                                            <div class="round-checkbox">
+                                                <input type="checkbox" id="${attr.id}-prof-${sheetId}">
+                                                <label for="${attr.id}-prof-${sheetId}"></label>
+                                            </div>
+                                        </div>
+                                        <div class="shield-wrapper-xs mx-auto">
+                                            <svg class="shield-svg" viewBox="0 0 100 115"><path d="M50 0 L100 25 V75 L50 115 L0 75 V25 Z"/></svg>
+                                            <input type="number" id="${attr.id}-val-${sheetId}" value="0">
+                                        </div>
+                                    </div>
+                                    ${index < attributes.length - 1 ? '<div class="border-l-2 border-dashed border-gray-300 self-stretch my-4"></div>' : ''}
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8" id="main-content-${sheetId}">
+                            <!-- LEFT COLUMN -->
+                            <div class="space-y-8" id="left-column-${sheetId}">
+                                <!-- HEALTH AND DAMAGE -->
+                                <div class="section space-y-4">
+                                     <div class="decorated-title-wrapper">
+                                        <svg class="decorated-title-svg" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M0 20 L20 0 H280 L300 20 L280 40 H20 Z"/></svg>
+                                        <h3 class="section-title text-xl">Saúde & Dano</h3>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs">Some seu nível atual aos seus limiares de dano.</p>
+                                         <div class="flex items-start justify-center w-full mt-2">
+                                             <div class="text-center flex-1">
+                                                <div class="damage-box">DANO MENOR</div>
+                                                <div class="text-xs mt-1">Marque 1 PV</div>
+                                            </div>
+                                            <input type="number" id="dano-menor-val-${sheetId}" class="w-12 text-center text-lg border-2 border-[var(--border-color)] rounded mx-2 bg-transparent" value="8">
+                                             <div class="text-center flex-1">
+                                                <div class="damage-box">DANO MAIOR</div>
+                                                <div class="text-xs mt-1">Marque 2 PV</div>
+                                            </div>
+                                            <input type="number" id="dano-maior-val-${sheetId}" class="w-12 text-center text-lg border-2 border-[var(--border-color)] rounded mx-2 bg-transparent" value="4">
+                                             <div class="text-center flex-1">
+                                                <div class="damage-box">DANO GRAVE</div>
+                                                <div class="text-xs mt-1">Marque 3 PV</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <h4 class="font-bold">PV</h4>
+                                            <button class="stat-btn" id="pv-minus-${sheetId}">-</button>
+                                            <button class="stat-btn" id="pv-plus-${sheetId}">+</button>
+                                        </div>
+                                        <div id="pv-container-${sheetId}" class="flex flex-wrap justify-center gap-2 mt-1"></div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <h4 class="font-bold">PF</h4>
+                                            <button class="stat-btn" id="pf-minus-${sheetId}">-</button>
+                                            <button class="stat-btn" id="pf-plus-${sheetId}">+</button>
+                                        </div>
+                                        <div id="pf-container-${sheetId}" class="flex flex-wrap justify-center gap-2 mt-1"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- HOPE -->
+                                <div class="section space-y-3 text-center">
+                                    <div class="decorated-title-wrapper">
+                                        <svg class="decorated-title-svg" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M0 20 L20 0 H280 L300 20 L280 40 H20 Z"/></svg>
+                                        <h3 class="section-title text-xl">Esperança</h3>
+                                    </div>
+                                    <p class="text-xs">Gaste 1 Ponto de Esperança para usar uma Experiência ou Prestar Ajuda.</p>
+                                    <div class="flex justify-center items-center gap-2">
+                                        <div class="relative w-full max-w-xs mx-auto h-12 flex items-center justify-center">
+                                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 300 40" preserveAspectRatio="none">
+                                                <path d="M0 20 L20 0 H280 L300 20 L280 40 H20 Z" fill="rgba(254, 249, 195, 0.5)" stroke="var(--text-color)" stroke-width="2"/>
+                                            </svg>
+                                            <div class="relative flex flex-wrap gap-2 justify-center items-center">
+                                                ${Array.from({length: 6}, (_, i) => `
+                                                    <div class="diamond-checkbox">
+                                                        <input type="checkbox" id="hope-check-${i+1}-${sheetId}">
+                                                        <label for="hope-check-${i+1}-${sheetId}">
+                                                            <svg class="diamond-checkbox-svg" viewBox="0 0 100 100">
+                                                                <path d="M50 0 L100 50 L50 100 L0 50 Z"/>
+                                                            </svg>
+                                                            <svg class="scar-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                               <path d="M16 8 L8 16 M8 8 L16 16" />
+                                                            </svg>
+                                                        </label>
+                                                    </div>
+                                                    ${i < 5 ? '<div class="w-px h-6 bg-[var(--text-color)]"></div>' : ''}
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                        <button id="scars-button-${sheetId}" class="scar-button text-2xl ml-2" title="Cicatrizes">𓄧</button>
+                                    </div>
+                                    <textarea id="hope-ability-${sheetId}" class="w-full text-sm text-center" rows="1" placeholder="Habilidade de Esperança"></textarea>
+                                </div>
+
+                                <!-- EXPERIENCES -->
+                                <div class="section">
+                                    <div class="decorated-title-wrapper">
+                                        <svg class="decorated-title-svg" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M0 20 L20 0 H280 L300 20 L280 40 H20 Z"/></svg>
+                                        <h3 class="section-title text-xl">Experiências</h3>
+                                    </div>
+                                    <div class="space-y-2">
+                                        ${Array.from({length: 5}, (_, i) => `
+                                            <div class="experience-row">
+                                                <input type="text" id="exp-name-${i+1}-${sheetId}" class="experience-name" placeholder="Nome da Experiência">
+                                                <div class="experience-bonus-wrapper">
+                                                    <svg class="experience-bonus-svg" viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0 0 H100 V50 H0 V25 L10 20 L0 15 Z M100 25 L90 30 L100 35 Z"/></svg>
+                                                    <input type="number" id="exp-bonus-${i+1}-${sheetId}" class="experience-bonus-input" value="0">
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                <!-- GOLD -->
+                                <div class="section">
+                                    <div class="decorated-title-wrapper">
+                                        <svg class="decorated-title-svg" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M0 20 L20 0 H280 L300 20 L280 40 H20 Z"/></svg>
+                                        <h3 class="section-title text-xl">Ouro</h3>
+                                        <span id="gold-total-${sheetId}" class="ml-4 bg-gray-300 rounded-full px-3 py-1 text-sm font-bold z-10">0</span>
+                                    </div>
+                                     <div class="flex justify-around items-start pt-2 flex-nowrap">
+                                        <div class="text-center p-1">
+                                            <h4 class="text-xs uppercase font-bold">Punhados</h4>
+                                            <div class="flex flex-wrap justify-center gap-1 mt-1">
+                                                ${Array.from({length: 9}, (_, i) => `<div class="round-checkbox"><input type="checkbox" class="gold-checkbox" data-value="10" id="punhado-check-${i+1}-${sheetId}"><label for="punhado-check-${i+1}-${sheetId}"></label></div>`).join('')}
+                                            </div>
+                                        </div>
+                                        <div class="border-l-2 border-dashed border-gray-300 self-stretch mx-2"></div>
+                                        <div class="text-center p-1">
+                                            <h4 class="text-xs uppercase font-bold">Bolsas</h4>
+                                            <div class="flex flex-wrap justify-center gap-1 mt-1">
+                                                ${Array.from({length: 9}, (_, i) => `<div class="coin-checkbox"><input type="checkbox" class="gold-checkbox" data-value="100" id="bolsa-check-${i+1}-${sheetId}"><label for="bolsa-check-${i+1}-${sheetId}"><svg class="coin-checkbox-svg" viewBox="0 0 100 100"><path d="M50 0 L100 50 L50 100 L0 50 Z"/></svg></label></div>`).join('')}
+                                            </div>
+                                        </div>
+                                        <div class="border-l-2 border-dashed border-gray-300 self-stretch mx-2"></div>
+                                        <div class="text-center p-1">
+                                            <h4 class="text-xs uppercase font-bold">Baú</h4>
+                                            <div class="flex justify-center mt-1">
+                                                <div class="square-checkbox"><input type="checkbox" class="gold-checkbox" data-value="1000" id="bau-check-1-${sheetId}"><label for="bau-check-1-${sheetId}"></label></div>
+                                            </div>
+                                        </div>
+                                     </div>
+                                </div>
+                                
+                                <div class="section flex-grow flex flex-col">
+                                    <div class="decorated-title-wrapper">
+                                        <svg class="decorated-title-svg" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M0 20 L20 0 H280 L300 20 L280 40 H20 Z"/></svg>
+                                        <h3 class="section-title text-xl">Habilidades de Classe</h3>
+                                    </div>
+                                    <textarea id="class-abilities-textarea-${sheetId}" class="w-full text-sm flex-grow" placeholder="Descreva as habilidades da sua classe aqui..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT COLUMN -->
+                            <div class="space-y-8" id="right-column-${sheetId}">
+                                <div class="section">
+                                    <div class="decorated-title-wrapper">
+                                        <svg class="decorated-title-svg" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M0 20 L20 0 H280 L300 20 L280 40 H20 Z"/></svg>
+                                        <h3 class="section-title text-xl">Armas Ativas</h3>
+                                    </div>
+                                    <div class="flex justify-center items-center gap-2 mt-2">
+                                        <h4 class="font-bold text-sm">PROFICIÊNCIA</h4>
+                                        <div class="flex items-center gap-1">
+                                            ${Array.from({length: 5}, (_, i) => `<div class="round-checkbox"><input type="checkbox" id="prof-check-${i+1}-${sheetId}"><label for="prof-check-${i+1}-${sheetId}"></label></div>`).join('')}
+                                        </div>
+                                    </div>
+                                    <div class="space-y-6 mt-4">
+                                        <!-- Weapon 1 -->
+                                        <div>
+                                           <h4 class="font-bold">PRINCIPAL</h4>
+                                           <div class="flex items-center mt-2">
+                                                <div class="flex-1 text-center"><input type="text" id="arma-principal-nome-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">NOME</label></div>
+                                                <div class="dotted-separator mx-2 h-8"></div>
+                                                <div class="flex-1 text-center"><input type="text" id="arma-principal-attr-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">ATRIBUTO & ALCANCE</label></div>
+                                                <div class="dotted-separator mx-2 h-8"></div>
+                                                <div class="flex-1 text-center"><input type="text" id="arma-principal-dano-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">DADOS & TIPO DE DANO</label></div>
+                                           </div>
+                                           <div class="mt-2">
+                                               <input type="text" id="arma-principal-habilidade-${sheetId}" class="styled-input-line w-full text-left" placeholder="...">
+                                               <label class="text-xs">HABILIDADE</label>
+                                           </div>
+                                        </div>
+                                        <!-- Weapon 2 -->
+                                        <div>
+                                           <h4 class="font-bold">SECUNDÁRIA</h4>
+                                            <div class="flex items-center mt-2">
+                                                <div class="flex-1 text-center"><input type="text" id="arma-secundaria-nome-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">NOME</label></div>
+                                                <div class="dotted-separator mx-2 h-8"></div>
+                                                <div class="flex-1 text-center"><input type="text" id="arma-secundaria-attr-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">ATRIBUTO & ALCANCE</label></div>
+                                                <div class="dotted-separator mx-2 h-8"></div>
+                                                <div class="flex-1 text-center"><input type="text" id="arma-secundaria-dano-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">DADOS & TIPO DE DANO</label></div>
+                                           </div>
+                                           <div class="mt-2">
+                                               <input type="text" id="arma-secundaria-habilidade-${sheetId}" class="styled-input-line w-full text-left" placeholder="...">
+                                               <label class="text-xs">HABILIDADE</label>
+                                           </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="section relative">
+                                     <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex justify-center items-center">
+                                         <div class="flex-grow h-px bg-[var(--border-color)]"></div>
+                                         <div class="decorated-title-wrapper !static !-translate-x-0 !-translate-y-0 !w-auto">
+                                             <svg class="decorated-title-svg" viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M0 20 L20 0 H280 L300 20 L280 40 H20 Z"/></svg>
+                                             <h3 class="section-title text-xl whitespace-nowrap px-4">Armadura Ativa</h3>
+                                         </div>
+                                         <div class="flex-grow h-px bg-[var(--border-color)]"></div>
+                                     </div>
+
+                                     <div class="flex items-center mt-2">
+                                        <div class="flex-1 text-center"><input type="text" id="armadura-ativa-nome-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">NOME</label></div>
+                                        <div class="dotted-separator mx-2 h-8"></div>
+                                        <div class="flex-1 text-center"><input type="text" id="armadura-ativa-limiares-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">LIMIARES BASE</label></div>
+                                        <div class="dotted-separator mx-2 h-8"></div>
+                                        <div class="flex-1 text-center"><input type="text" id="armadura-ativa-base-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">ARMADURA BASE</label></div>
+                                   </div>
+                                   <div class="mt-2">
+                                       <input type="text" id="armadura-ativa-habilidade-${sheetId}" class="styled-input-line w-full text-left" placeholder="...">
+                                       <label class="text-xs">HABILIDADE</label>
+                                   </div>
+                                </div>
+                                
+                                <div class="section">
+                                     <h3 class="section-title text-xl text-center mb-4">Inventário</h3>
+                                     <div class="space-y-2">
+                                        ${Array.from({length: 4}, (_, i) => `<div><input type="text" id="inv-item-${i+1}-${sheetId}" class="styled-input-line w-full"><svg class="curved-line" viewBox="0 0 100 10"><path d="M0 5 Q 50 10, 100 5" /></svg></div>`).join('')}
+                                     </div>
+
+                                     <div class="space-y-6 mt-6">
+                                        <div>
+                                            <div class="flex justify-between items-center">
+                                                <h4 class="font-bold text-sm">ARMA NO INVENTÁRIO</h4>
+                                                <div class="flex items-center gap-2 text-xs">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                                                    <input type="checkbox" id="inv-arma1-primaria-${sheetId}" class="mr-1"><label for="inv-arma1-primaria-${sheetId}">Primária</label>
+                                                    <input type="checkbox" id="inv-arma1-secundaria-${sheetId}" class="mr-1"><label for="inv-arma1-secundaria-${sheetId}">Secundária</label>
+                                                </div>
+                                            </div>
+                                           <div class="flex items-center mt-2">
+                                                <div class="flex-1 text-center"><input type="text" id="inv-arma1-nome-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">NOME</label></div>
+                                                <div class="dotted-separator mx-2 h-8"></div>
+                                                <div class="flex-1 text-center"><input type="text" id="inv-arma1-attr-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">ATRIBUTO & ALCANCE</label></div>
+                                                <div class="dotted-separator mx-2 h-8"></div>
+                                                <div class="flex-1 text-center"><input type="text" id="inv-arma1-dano-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">DADOS & TIPO DE DANO</label></div>
+                                           </div>
+                                           <div class="mt-2">
+                                               <input type="text" id="inv-arma1-habilidade-${sheetId}" class="styled-input-line w-full text-left" placeholder="...">
+                                               <label class="text-xs">HABILIDADE</label>
+                                           </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between items-center">
+                                                <h4 class="font-bold text-sm">ARMA NO INVENTÁRIO</h4>
+                                                <div class="flex items-center gap-2 text-xs">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                                                    <input type="checkbox" id="inv-arma2-primaria-${sheetId}" class="mr-1"><label for="inv-arma2-primaria-${sheetId}">Primária</label>
+                                                    <input type="checkbox" id="inv-arma2-secundaria-${sheetId}" class="mr-1"><label for="inv-arma2-secundaria-${sheetId}">Secundária</label>
+                                                </div>
+                                            </div>
+                                           <div class="flex items-center mt-2">
+                                                <div class="flex-1 text-center"><input type="text" id="inv-arma2-nome-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">NOME</label></div>
+                                                <div class="dotted-separator mx-2 h-8"></div>
+                                                <div class="flex-1 text-center"><input type="text" id="inv-arma2-attr-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">ATRIBUTO & ALCANCE</label></div>
+                                                <div class="dotted-separator mx-2 h-8"></div>
+                                                <div class="flex-1 text-center"><input type="text" id="inv-arma2-dano-${sheetId}" class="styled-input-line" placeholder="..."><label class="text-xs">DADOS & TIPO DE DANO</label></div>
+                                           </div>
+                                           <div class="mt-2">
+                                               <input type="text" id="inv-arma2-habilidade-${sheetId}" class="styled-input-line w-full text-left" placeholder="...">
+                                               <label class="text-xs">HABILIDADE</label>
+                                           </div>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+
+            function activateSheet(sheetId) {
+                // Deactivate all
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.character-sheet-container').forEach(s => s.classList.add('hidden'));
+
+                // Activate target
+                const tab = document.querySelector(`.tab[data-id="${sheetId}"]`);
+                const sheet = document.getElementById(sheetId);
+                
+                if(tab && sheet) {
+                    tab.classList.add('active');
+                    sheet.classList.remove('hidden');
+                    activeSheetId = sheetId;
+                    saveBtn.disabled = false;
+                    welcomeScreen.classList.add('hidden');
+                    adjustLayout();
+                } else {
+                    activeSheetId = null;
+                    saveBtn.disabled = true;
+                    welcomeScreen.classList.remove('hidden');
+                }
+            }
+
+            function closeSheet(sheetId) {
+                const tab = document.querySelector(`.tab[data-id="${sheetId}"]`);
+                const sheet = document.getElementById(sheetId);
+                const conditionsModal = document.querySelector(`.modal[data-modal-id="conditions-${sheetId}"]`);
+                const scarsModal = document.querySelector(`.modal[data-modal-id="scars-${sheetId}"]`);
+
+                if (tab) tab.remove();
+                if (sheet) sheet.remove();
+                if (conditionsModal) conditionsModal.remove();
+                if (scarsModal) scarsModal.remove();
+
+                if (activeSheetId === sheetId) {
+                    const firstTab = tabsContainer.querySelector('.tab');
+                    if (firstTab) {
+                        activateSheet(firstTab.dataset.id);
+                    } else {
+                        activeSheetId = null;
+                        saveBtn.disabled = true;
+                        welcomeScreen.classList.remove('hidden');
+                    }
+                }
+            }
+
+            function createNewSheet(data = null) {
+                sheetCounter++;
+                const sheetId = `sheet-${sheetCounter}`;
+                
+                // Create Tab
+                const tab = document.createElement('div');
+                tab.className = 'tab p-4 cursor-pointer flex justify-between items-center';
+                tab.dataset.id = sheetId;
+                tab.innerHTML = `
+                    <span class="tab-name text-sm font-bold truncate">${(data && data.header.nome) || `Personagem ${sheetCounter}`}</span>
+                    <button class="close-tab-btn w-5 h-5 rounded-full bg-gray-300 hover:bg-gray-400 text-gray-700 items-center justify-center text-xs font-bold">X</button>
+                `;
+                tabsContainer.appendChild(tab);
+                tab.addEventListener('click', () => activateSheet(sheetId));
+                tab.querySelector('.close-tab-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeSheet(sheetId);
+                });
+
+                // Create Sheet
+                const sheetWrapper = document.createElement('div');
+                sheetWrapper.innerHTML = createSheetComponentHTML(sheetId);
+                sheetsContainer.appendChild(sheetWrapper);
+
+                // Create Modals
+                const conditionsModalNode = modalTemplate.content.cloneNode(true);
+                const conditionsModalEl = conditionsModalNode.querySelector('.modal');
+                conditionsModalEl.dataset.modalId = `conditions-${sheetId}`;
+                document.body.appendChild(conditionsModalEl);
+
+                const scarsModalNode = modalTemplate.content.cloneNode(true);
+                const scarsModalEl = scarsModalNode.querySelector('.modal');
+                scarsModalEl.dataset.modalId = `scars-${sheetId}`;
+                document.body.appendChild(scarsModalEl);
+                
+                const scripts = initializeSheetScripts(sheetId);
+                if(data) {
+                    populateSheet(sheetId, data, scripts);
+                }
+                
+                activateSheet(sheetId);
+            }
+
+            function initializeSheetScripts(sheetId) {
+                const sheet = document.getElementById(sheetId);
+                
+                // Update tab name on character name change
+                const nameInput = sheet.querySelector(`#info-nome-${sheetId}`);
+                nameInput.addEventListener('input', () => {
+                   const tabName = tabsContainer.querySelector(`.tab[data-id="${sheetId}"] .tab-name`);
+                   tabName.textContent = nameInput.value || `Personagem ${sheetId.split('-')[1]}`;
+                });
+
+                const pvControl = setupStatControlForSheet(sheetId, 'pv', 5);
+                const pfControl = setupStatControlForSheet(sheetId, 'pf', 5);
+
+                const goldCheckboxes = sheet.querySelectorAll('.gold-checkbox');
+                goldCheckboxes.forEach(cb => cb.addEventListener('change', () => calculateGoldForSheet(sheetId)));
+                calculateGoldForSheet(sheetId);
+
+                // Conditions Modal Logic
+                const conditions = ['Vulnerável', 'Escondido', 'Contido'];
+                const conditionsButton = sheet.querySelector(`#conditions-button-${sheetId}`);
+                const conditionsModal = document.querySelector(`.modal[data-modal-id="conditions-${sheetId}"]`);
+                const conditionsModalTitle = conditionsModal.querySelector('.modal-title');
+                const closeModalBtnCond = conditionsModal.querySelector('.close-modal-btn');
+                const modalConditionsContainer = conditionsModal.querySelector('.modal-body');
+                
+                conditionsModalTitle.textContent = 'Condições';
+                modalConditionsContainer.innerHTML = '';
+                conditions.forEach(condition => {
+                    const div = document.createElement('div');
+                    div.classList.add('flex', 'items-center', 'justify-between', 'p-2', 'rounded', 'hover:bg-gray-100');
+                    const conditionId = `condition-${condition.toLowerCase().replace('á','a')}-${sheetId}`;
+                    div.innerHTML = `
+                        <span class="font-bold uppercase text-sm">${condition}</span>
+                        <label class="switch">
+                            <input type="checkbox" id="${conditionId}" class="condition-toggle" data-condition="${condition}">
+                            <span class="slider"></span>
+                        </label>
+                    `;
+                    modalConditionsContainer.appendChild(div);
+                });
+                conditionsButton.addEventListener('click', () => conditionsModal.classList.remove('hidden'));
+                closeModalBtnCond.addEventListener('click', () => conditionsModal.classList.add('hidden'));
+                conditionsModal.addEventListener('click', (e) => {
+                    if (e.target === conditionsModal) conditionsModal.classList.add('hidden');
+                });
+                conditionsModal.querySelectorAll('.condition-toggle').forEach(toggle => {
+                    toggle.addEventListener('change', () => updateConditionsDisplayForSheet(sheetId));
+                });
+                updateConditionsDisplayForSheet(sheetId);
+                
+                // Scars Modal Logic
+                const scarsButton = sheet.querySelector(`#scars-button-${sheetId}`);
+                const scarsModal = document.querySelector(`.modal[data-modal-id="scars-${sheetId}"]`);
+                const scarsModalTitle = scarsModal.querySelector('.modal-title');
+                const closeModalBtnScars = scarsModal.querySelector('.close-modal-btn');
+                const modalScarsContainer = scarsModal.querySelector('.modal-body');
+                
+                scarsModalTitle.textContent = 'Cicatrizes';
+                modalScarsContainer.innerHTML = ''; // Clear
+                const scarsContent = document.createElement('div');
+                scarsContent.className = 'flex items-center justify-center gap-2';
+                for (let i = 1; i <= 6; i++) {
+                    const scarId = `scar-check-${i}-${sheetId}`;
+                    const checkboxHTML = `
+                        <label class="square-checkbox">
+                           <input type="checkbox" id="${scarId}" class="scar-toggle">
+                           <label for="${scarId}"></label>
+                        </label>
+                    `;
+                    scarsContent.innerHTML += checkboxHTML;
+                     if (i < 6) {
+                        scarsContent.innerHTML += `<div class="w-4 h-px bg-gray-400"></div>`;
+                    }
+                }
+                modalScarsContainer.appendChild(scarsContent);
+
+                scarsButton.addEventListener('click', () => scarsModal.classList.remove('hidden'));
+                closeModalBtnScars.addEventListener('click', () => scarsModal.classList.add('hidden'));
+                scarsModal.addEventListener('click', (e) => {
+                    if (e.target === scarsModal) scarsModal.classList.add('hidden');
+                });
+                scarsModal.querySelectorAll('.scar-toggle').forEach(toggle => {
+                    toggle.addEventListener('change', () => updateHopeFromScars(sheetId));
+                });
+                updateHopeFromScars(sheetId);
+
+
+                // Portrait Upload
+                const portraitUploadInput = sheet.querySelector(`#portrait-upload-${sheetId}`);
+                const portraitImage = sheet.querySelector(`#portrait-image-${sheetId}`);
+                const portraitPlaceholder = sheet.querySelector(`#portrait-placeholder-${sheetId}`);
+
+                portraitUploadInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            portraitImage.src = e.target.result;
+                            portraitImage.classList.remove('hidden');
+                            portraitPlaceholder.classList.add('hidden');
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+                
+                 return { pvControl, pfControl };
+            }
+
+            function setupStatControlForSheet(sheetId, statName, initialValue) {
+                const container = document.getElementById(`${statName}-container-${sheetId}`);
+                const plusBtn = document.getElementById(`${statName}-plus-${sheetId}`);
+                const minusBtn = document.getElementById(`${statName}-minus-${sheetId}`);
+                let count = initialValue;
+
+                for (let i = 1; i <= 12; i++) {
+                    const div = document.createElement('div');
+                    div.classList.add('square-checkbox', `${statName}-box`);
+                    div.innerHTML = `<input type="checkbox" id="${statName}-check-${i}-${sheetId}" disabled><label for="${statName}-check-${i}-${sheetId}"></label>`;
+                    container.appendChild(div);
+                }
+                
+                const boxes = container.querySelectorAll(`.${statName}-box`);
+
+                function updateVisibility() {
+                    boxes.forEach((box, index) => {
+                        const checkbox = box.querySelector('input');
+                        if (index < count) {
+                            box.classList.remove('disabled');
+                            checkbox.disabled = false;
+                        } else {
+                            box.classList.add('disabled');
+                            checkbox.disabled = true;
+                            checkbox.checked = false; 
+                        }
+                    });
+                }
+
+                plusBtn.addEventListener('click', () => { if (count < 12) { count++; updateVisibility(); } });
+                minusBtn.addEventListener('click', () => { if (count > 1) { count--; updateVisibility(); } });
+                
+                updateVisibility();
+                return {
+                    setCount: (newCount) => {
+                        count = newCount;
+                        updateVisibility();
+                    },
+                    getCount: () => count
+                }
+            }
+            
+            function calculateGoldForSheet(sheetId) {
+                const sheet = document.getElementById(sheetId);
+                const checkboxes = sheet.querySelectorAll('.gold-checkbox');
+                const totalEl = sheet.querySelector(`#gold-total-${sheetId}`);
+                let totalGold = 0;
+                checkboxes.forEach(cb => {
+                    if (cb.checked) totalGold += parseInt(cb.dataset.value);
+                });
+                totalEl.textContent = totalGold;
+            }
+
+            function updateConditionsDisplayForSheet(sheetId) {
+                 const sheet = document.getElementById(sheetId);
+                 const modal = document.querySelector(`.modal[data-modal-id="conditions-${sheetId}"]`);
+                 const conditionsListDiv = sheet.querySelector(`#conditions-list-${sheetId}`);
+                 const activeConditions = [];
+                 modal.querySelectorAll('.condition-toggle:checked').forEach(toggle => {
+                    activeConditions.push(toggle.dataset.condition);
+                 });
+                if (activeConditions.length > 0) {
+                    conditionsListDiv.innerHTML = activeConditions.join('<br>');
+                } else {
+                    conditionsListDiv.textContent = 'NO ACTIVE CONDITIONS';
+                }
+            }
+            
+            function updateHopeFromScars(sheetId) {
+                const scarsModal = document.querySelector(`.modal[data-modal-id="scars-${sheetId}"]`);
+                const sheet = document.getElementById(sheetId);
+                const checkedScars = scarsModal.querySelectorAll('.scar-toggle:checked').length;
+                
+                for (let i = 1; i <= 6; i++) {
+                    const hopeCheckbox = sheet.querySelector(`#hope-check-${i}-${sheetId}`);
+                    const hopeCheckboxContainer = hopeCheckbox.closest('.diamond-checkbox');
+                    
+                    if (i > (6 - checkedScars)) {
+                        hopeCheckbox.disabled = true;
+                        hopeCheckbox.checked = false;
+                        hopeCheckboxContainer.classList.add('scarred');
+                    } else {
+                        hopeCheckbox.disabled = false;
+                        hopeCheckboxContainer.classList.remove('scarred');
+                    }
+                }
+            }
+            
+            function saveActiveSheet() {
+                if(!activeSheetId) return;
+                
+                const sheet = document.getElementById(activeSheetId);
+                const scarsModal = document.querySelector(`.modal[data-modal-id="scars-${activeSheetId}"]`);
+                const pvMax = sheet.querySelectorAll(`#pv-container-${activeSheetId} .square-checkbox:not(.disabled)`).length;
+                const pfMax = sheet.querySelectorAll(`#pf-container-${activeSheetId} .square-checkbox:not(.disabled)`).length;
+
+                const characterData = {
+                    version: "1.0",
+                    header: {
+                        nome: sheet.querySelector(`#info-nome-${activeSheetId}`).value,
+                        genero: sheet.querySelector(`#info-genero-${activeSheetId}`).value,
+                        heranca: sheet.querySelector(`#info-heranca-${activeSheetId}`).value,
+                        classe: sheet.querySelector(`#info-classe-${activeSheetId}`).value,
+                        nivel: sheet.querySelector(`#nivel-input-${activeSheetId}`).value,
+                        portrait: sheet.querySelector(`#portrait-image-${activeSheetId}`).src,
+                        conditions: Array.from(document.querySelector(`.modal[data-modal-id="conditions-${activeSheetId}"]`).querySelectorAll('.condition-toggle:checked')).map(el => el.dataset.condition)
+                    },
+                    stats: {
+                        evasao: sheet.querySelector(`#evasao-input-${activeSheetId}`).value,
+                        armadura: sheet.querySelector(`#armadura-input-${activeSheetId}`).value,
+                        armaduraChecks: Array.from({length: 12}, (_, i) => sheet.querySelector(`#arm-check-${i+1}-${activeSheetId}`).checked),
+                        attributes: attributes.reduce((acc, attr) => {
+                            acc[attr.id] = {
+                                value: sheet.querySelector(`#${attr.id}-val-${activeSheetId}`).value,
+                                proficient: sheet.querySelector(`#${attr.id}-prof-${activeSheetId}`).checked
+                            };
+                            return acc;
+                        }, {})
+                    },
+                    saude: {
+                        danoMenor: sheet.querySelector(`#dano-menor-val-${activeSheetId}`).value,
+                        danoMaior: sheet.querySelector(`#dano-maior-val-${activeSheetId}`).value,
+                        pvMax: pvMax,
+                        pfMax: pfMax,
+                        pv: Array.from({length: 12}, (_, i) => sheet.querySelector(`#pv-check-${i+1}-${activeSheetId}`).checked),
+                        pf: Array.from({length: 12}, (_, i) => sheet.querySelector(`#pf-check-${i+1}-${activeSheetId}`).checked),
+                    },
+                    esperanca: {
+                        checks: Array.from({length: 6}, (_, i) => sheet.querySelector(`#hope-check-${i+1}-${activeSheetId}`).checked),
+                        cicatrizes: Array.from({length: 6}, (_, i) => scarsModal.querySelector(`#scar-check-${i+1}-${activeSheetId}`).checked),
+                        habilidade: sheet.querySelector(`#hope-ability-${activeSheetId}`).value
+                    },
+                    experiencias: Array.from({length: 5}, (_, i) => ({
+                        nome: sheet.querySelector(`#exp-name-${i+1}-${activeSheetId}`).value,
+                        bonus: sheet.querySelector(`#exp-bonus-${i+1}-${activeSheetId}`).value
+                    })),
+                    ouro: {
+                        punhados: Array.from({length: 9}, (_, i) => sheet.querySelector(`#punhado-check-${i+1}-${activeSheetId}`).checked),
+                        bolsas: Array.from({length: 9}, (_, i) => sheet.querySelector(`#bolsa-check-${i+1}-${activeSheetId}`).checked),
+                        bau: sheet.querySelector(`#bau-check-1-${activeSheetId}`).checked,
+                    },
+                    habilidadesClasse: sheet.querySelector(`#class-abilities-textarea-${activeSheetId}`).value,
+                    armasAtivas: {
+                        proficiencia: Array.from({length: 5}, (_, i) => sheet.querySelector(`#prof-check-${i+1}-${activeSheetId}`).checked),
+                        principal: {
+                            nome: sheet.querySelector(`#arma-principal-nome-${activeSheetId}`).value,
+                            attr: sheet.querySelector(`#arma-principal-attr-${activeSheetId}`).value,
+                            dano: sheet.querySelector(`#arma-principal-dano-${activeSheetId}`).value,
+                            habilidade: sheet.querySelector(`#arma-principal-habilidade-${activeSheetId}`).value,
+                        },
+                        secundaria: {
+                            nome: sheet.querySelector(`#arma-secundaria-nome-${activeSheetId}`).value,
+                            attr: sheet.querySelector(`#arma-secundaria-attr-${activeSheetId}`).value,
+                            dano: sheet.querySelector(`#arma-secundaria-dano-${activeSheetId}`).value,
+                            habilidade: sheet.querySelector(`#arma-secundaria-habilidade-${activeSheetId}`).value,
+                        }
+                    },
+                    armaduraAtiva: {
+                        nome: sheet.querySelector(`#armadura-ativa-nome-${activeSheetId}`).value,
+                        limiares: sheet.querySelector(`#armadura-ativa-limiares-${activeSheetId}`).value,
+                        base: sheet.querySelector(`#armadura-ativa-base-${activeSheetId}`).value,
+                        habilidade: sheet.querySelector(`#armadura-ativa-habilidade-${activeSheetId}`).value
+                    },
+                    inventario: {
+                        itens: Array.from({length: 4}, (_, i) => sheet.querySelector(`#inv-item-${i+1}-${activeSheetId}`).value),
+                        arma1: {
+                            nome: sheet.querySelector(`#inv-arma1-nome-${activeSheetId}`).value,
+                            attr: sheet.querySelector(`#inv-arma1-attr-${activeSheetId}`).value,
+                            dano: sheet.querySelector(`#inv-arma1-dano-${activeSheetId}`).value,
+                            habilidade: sheet.querySelector(`#inv-arma1-habilidade-${activeSheetId}`).value,
+                            primaria: sheet.querySelector(`#inv-arma1-primaria-${activeSheetId}`).checked,
+                            secundaria: sheet.querySelector(`#inv-arma1-secundaria-${activeSheetId}`).checked
+                        },
+                        arma2: {
+                            nome: sheet.querySelector(`#inv-arma2-nome-${activeSheetId}`).value,
+                            attr: sheet.querySelector(`#inv-arma2-attr-${activeSheetId}`).value,
+                            dano: sheet.querySelector(`#inv-arma2-dano-${activeSheetId}`).value,
+                            habilidade: sheet.querySelector(`#inv-arma2-habilidade-${activeSheetId}`).value,
+                            primaria: sheet.querySelector(`#inv-arma2-primaria-${activeSheetId}`).checked,
+                            secundaria: sheet.querySelector(`#inv-arma2-secundaria-${activeSheetId}`).checked
+                        }
+                    }
+                };
+                
+                const jsonString = JSON.stringify(characterData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${characterData.header.nome || 'personagem'}_daggerheart.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+            
+            saveBtn.addEventListener('click', saveActiveSheet);
+            
+            importFileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.version !== "1.0") throw new Error("Versão de ficha incompatível.");
+                        createNewSheet(data);
+                    } catch (error) {
+                        alert('Erro ao ler o arquivo JSON. Verifique o formato e a versão.');
+                        console.error("JSON Parse Error:", error);
+                    }
+                };
+                reader.readAsText(file);
+                importFileInput.value = ''; // Reset input
+            });
+            
+            function populateSheet(sheetId, data, scripts) {
+                 const sheet = document.getElementById(sheetId);
+                 
+                // Header
+                sheet.querySelector(`#info-nome-${sheetId}`).value = data.header.nome || '';
+                sheet.querySelector(`#info-genero-${sheetId}`).value = data.header.genero || '';
+                sheet.querySelector(`#info-heranca-${sheetId}`).value = data.header.heranca || '';
+                sheet.querySelector(`#info-classe-${sheetId}`).value = data.header.classe || '';
+                sheet.querySelector(`#nivel-input-${sheetId}`).value = data.header.nivel || '1';
+                const portraitImage = sheet.querySelector(`#portrait-image-${sheetId}`);
+                const portraitPlaceholder = sheet.querySelector(`#portrait-placeholder-${sheetId}`);
+                if (data.header.portrait && data.header.portrait.startsWith('data:image')) {
+                    portraitImage.src = data.header.portrait;
+                    portraitImage.classList.remove('hidden');
+                    portraitPlaceholder.classList.add('hidden');
+                }
+                
+                // Conditions
+                const conditionsModal = document.querySelector(`.modal[data-modal-id="conditions-${sheetId}"]`);
+                conditionsModal.querySelectorAll('.condition-toggle').forEach(t => t.checked = false);
+                if (data.header.conditions) {
+                    data.header.conditions.forEach(cond => {
+                        const toggle = conditionsModal.querySelector(`.condition-toggle[data-condition="${cond}"]`);
+                        if(toggle) toggle.checked = true;
+                    });
+                }
+                updateConditionsDisplayForSheet(sheetId);
+
+                // Stats
+                sheet.querySelector(`#evasao-input-${sheetId}`).value = data.stats.evasao || '10';
+                sheet.querySelector(`#armadura-input-${sheetId}`).value = data.stats.armadura || '0';
+                data.stats.armaduraChecks.forEach((val, i) => sheet.querySelector(`#arm-check-${i+1}-${sheetId}`).checked = val);
+                attributes.forEach(attr => {
+                    if(data.stats.attributes[attr.id]){
+                        sheet.querySelector(`#${attr.id}-val-${sheetId}`).value = data.stats.attributes[attr.id].value || '0';
+                        sheet.querySelector(`#${attr.id}-prof-${sheetId}`).checked = data.stats.attributes[attr.id].proficient || false;
+                    }
+                });
+                
+                // Health
+                sheet.querySelector(`#dano-menor-val-${sheetId}`).value = data.saude.danoMenor || '8';
+                sheet.querySelector(`#dano-maior-val-${sheetId}`).value = data.saude.danoMaior || '4';
+                scripts.pvControl.setCount(data.saude.pvMax);
+                scripts.pfControl.setCount(data.saude.pfMax);
+                data.saude.pv.forEach((val, i) => sheet.querySelector(`#pv-check-${i+1}-${sheetId}`).checked = val);
+                data.saude.pf.forEach((val, i) => sheet.querySelector(`#pf-check-${i+1}-${sheetId}`).checked = val);
+                
+                // Hope
+                data.esperanca.checks.forEach((val, i) => sheet.querySelector(`#hope-check-${i+1}-${sheetId}`).checked = val);
+                const scarsModal = document.querySelector(`.modal[data-modal-id="scars-${sheetId}"]`);
+                if(data.esperanca.cicatrizes) {
+                    data.esperanca.cicatrizes.forEach((val, i) => scarsModal.querySelector(`#scar-check-${i+1}-${sheetId}`).checked = val);
+                }
+                updateHopeFromScars(sheetId);
+                sheet.querySelector(`#hope-ability-${sheetId}`).value = data.esperanca.habilidade || '';
+                
+                // Experiences
+                data.experiencias.forEach((exp, i) => {
+                    sheet.querySelector(`#exp-name-${i+1}-${sheetId}`).value = exp.nome || '';
+                    sheet.querySelector(`#exp-bonus-${i+1}-${sheetId}`).value = exp.bonus || '0';
+                });
+                
+                // Gold
+                data.ouro.punhados.forEach((val, i) => sheet.querySelector(`#punhado-check-${i+1}-${sheetId}`).checked = val);
+                data.ouro.bolsas.forEach((val, i) => sheet.querySelector(`#bolsa-check-${i+1}-${sheetId}`).checked = val);
+                sheet.querySelector(`#bau-check-1-${sheetId}`).checked = data.ouro.bau || false;
+                calculateGoldForSheet(sheetId);
+
+                // Class abilities
+                sheet.querySelector(`#class-abilities-textarea-${sheetId}`).value = data.habilidadesClasse || '';
+                
+                // Active Weapons
+                data.armasAtivas.proficiencia.forEach((val, i) => sheet.querySelector(`#prof-check-${i+1}-${sheetId}`).checked = val);
+                const principal = data.armasAtivas.principal;
+                sheet.querySelector(`#arma-principal-nome-${sheetId}`).value = principal.nome || '';
+                sheet.querySelector(`#arma-principal-attr-${sheetId}`).value = principal.attr || '';
+                sheet.querySelector(`#arma-principal-dano-${sheetId}`).value = principal.dano || '';
+                sheet.querySelector(`#arma-principal-habilidade-${sheetId}`).value = principal.habilidade || '';
+                const secundaria = data.armasAtivas.secundaria;
+                sheet.querySelector(`#arma-secundaria-nome-${sheetId}`).value = secundaria.nome || '';
+                sheet.querySelector(`#arma-secundaria-attr-${sheetId}`).value = secundaria.attr || '';
+                sheet.querySelector(`#arma-secundaria-dano-${sheetId}`).value = secundaria.dano || '';
+                sheet.querySelector(`#arma-secundaria-habilidade-${sheetId}`).value = secundaria.habilidade || '';
+                
+                // Active Armor
+                const armaduraAtiva = data.armaduraAtiva;
+                sheet.querySelector(`#armadura-ativa-nome-${sheetId}`).value = armaduraAtiva.nome || '';
+                sheet.querySelector(`#armadura-ativa-limiares-${sheetId}`).value = armaduraAtiva.limiares || '';
+                sheet.querySelector(`#armadura-ativa-base-${sheetId}`).value = armaduraAtiva.base || '';
+                sheet.querySelector(`#armadura-ativa-habilidade-${sheetId}`).value = armaduraAtiva.habilidade || '';
+                
+                // Inventory
+                data.inventario.itens.forEach((item, i) => sheet.querySelector(`#inv-item-${i+1}-${sheetId}`).value = item || '');
+                const armaInv1 = data.inventario.arma1;
+                sheet.querySelector(`#inv-arma1-nome-${sheetId}`).value = armaInv1.nome || '';
+                sheet.querySelector(`#inv-arma1-attr-${sheetId}`).value = armaInv1.attr || '';
+                sheet.querySelector(`#inv-arma1-dano-${sheetId}`).value = armaInv1.dano || '';
+                sheet.querySelector(`#inv-arma1-habilidade-${sheetId}`).value = armaInv1.habilidade || '';
+                sheet.querySelector(`#inv-arma1-primaria-${sheetId}`).checked = armaInv1.primaria || false;
+                sheet.querySelector(`#inv-arma1-secundaria-${sheetId}`).checked = armaInv1.secundaria || false;
+                const armaInv2 = data.inventario.arma2;
+                sheet.querySelector(`#inv-arma2-nome-${sheetId}`).value = armaInv2.nome || '';
+                sheet.querySelector(`#inv-arma2-attr-${sheetId}`).value = armaInv2.attr || '';
+                sheet.querySelector(`#inv-arma2-dano-${sheetId}`).value = armaInv2.dano || '';
+                sheet.querySelector(`#inv-arma2-habilidade-${sheetId}`).value = armaInv2.habilidade || '';
+                sheet.querySelector(`#inv-arma2-primaria-${sheetId}`).checked = armaInv2.primaria || false;
+                sheet.querySelector(`#inv-arma2-secundaria-${sheetId}`).checked = armaInv2.secundaria || false;
+            }
+
+            window.addEventListener('resize', adjustLayout);
+        });
+    </script>
+</body>
+</html>
+
+
